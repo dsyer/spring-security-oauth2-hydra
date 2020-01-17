@@ -15,8 +15,6 @@ spring:
             authorization-uri: http://127.0.0.1:4444/oauth2/auth
             token-uri: http://127.0.0.1:4444/oauth2/token
             user-info-uri: http://127.0.0.1:4444/userinfo
-            user-name-attribute: sub
-            user-info-authentication-method: header
             jwk-set-uri: http://127.0.0.1:4444/.well-known/jwks.json
 
 logging:
