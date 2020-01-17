@@ -1,0 +1,24 @@
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          hydra:
+            scope: openid
+            client-id: auth-code-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: http://127.0.0.1:8080/login/oauth2/code/hydra
+        provider:
+          hydra:
+            authorization-uri: http://127.0.0.1:4444/oauth2/auth
+            token-uri: http://127.0.0.1:4444/oauth2/token
+            user-info-uri: http://127.0.0.1:4444/userinfo
+            user-name-attribute: sub
+            user-info-authentication-method: header
+            jwk-set-uri: http://127.0.0.1:4444/.well-known/jwks.json
+
+logging:
+  level:
+    org.springframework.security: DEBUG
