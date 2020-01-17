@@ -5,7 +5,7 @@ spring:
       client:
         registration:
           hydra:
-            scope: openid
+            scope: openid,offline
             client-id: auth-code-client
             client-secret: secret
             authorization-grant-type: authorization_code
