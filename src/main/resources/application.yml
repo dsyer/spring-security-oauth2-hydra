@@ -9,7 +9,7 @@ spring:
             client-id: auth-code-client
             client-secret: secret
             authorization-grant-type: authorization_code
-            redirect-uri: http://127.0.0.1:8080/login/oauth2/code/hydra
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
         provider:
           hydra:
             authorization-uri: http://127.0.0.1:4444/oauth2/auth
