@@ -27,9 +27,9 @@ public class DemoApplication {
 class OAuth2LoginController {
 
 	@GetMapping("/")
-	public String index(Model model,
-						@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
-						@AuthenticationPrincipal OAuth2User oauth2User) {
+	public String index(Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
+			@AuthenticationPrincipal OAuth2User oauth2User) {
+		model.addAttribute("accessToken", authorizedClient.getAccessToken());
 		model.addAttribute("userName", oauth2User.getName());
 		model.addAttribute("clientName", authorizedClient.getClientRegistration().getClientName());
 		model.addAttribute("userAttributes", oauth2User.getAttributes());

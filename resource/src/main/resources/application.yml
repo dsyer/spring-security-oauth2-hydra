@@ -1,0 +1,15 @@
+server:
+  port: 9000
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://127.0.0.1:4445/oauth2/introspect
+          client-id: 
+          client-secret: 
+
+logging:
+  level:
+    org.springframework.security: DEBUG
