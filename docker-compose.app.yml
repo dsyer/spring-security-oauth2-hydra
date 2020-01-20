@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  ui:
+    build: ./ui
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  resource:
+    build: ./resource
+    restart: unless-stopped

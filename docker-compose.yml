@@ -28,13 +28,3 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
-
-  ui:
-    build: ./ui
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
-
-  resource:
-    build: ./resource
-    restart: unless-stopped

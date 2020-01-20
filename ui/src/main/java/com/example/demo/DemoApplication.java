@@ -29,8 +29,7 @@ public class DemoApplication {
 @Controller
 class OAuth2LoginController {
 
-	@Value("${resource.url}")
-	String url;
+	@Value("${resource.url}") String url;
 	private RestTemplateBuilder builder;
 
 	OAuth2LoginController(RestTemplateBuilder builder) {
@@ -46,8 +45,7 @@ class OAuth2LoginController {
 		model.addAttribute("userAttributes", oauth2User.getAttributes());
 		try {
 			RestTemplate rest = builder.additionalRequestCustomizers(request -> {
-				request.getHeaders().add("Authorization",
-						"Bearer " + authorizedClient.getAccessToken().getTokenValue());
+				request.getHeaders().add("Authorization", "Bearer " + authorizedClient.getAccessToken().getTokenValue());
 			}).rootUri(url).build();
 			model.addAttribute("message", rest.getForObject("/", String.class));
 		} catch (Exception e) {
