@@ -1,4 +1,11 @@
 
+hydra:
+  url: http://127.0.0.1:4444
+  redirect: http://127.0.0.1:4444
+
+resource:
+  url: http://localhost:9000
+
 spring:
   security:
     oauth2:
@@ -12,11 +19,24 @@ spring:
             redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
         provider:
           hydra:
-            authorization-uri: http://127.0.0.1:4444/oauth2/auth
-            token-uri: http://127.0.0.1:4444/oauth2/token
-            user-info-uri: http://127.0.0.1:4444/userinfo
-            jwk-set-uri: http://127.0.0.1:4444/.well-known/jwks.json
+            authorization-uri: ${hydra.redirect}/oauth2/auth
+            token-uri: ${hydra.url}/oauth2/token
+            user-info-uri: ${hydra.url}/userinfo
+            jwk-set-uri: ${hydra.url}/.well-known/jwks.json
 
 logging:
   level:
     org.springframework.security: DEBUG
+
+---
+
+spring:
+  profiles:
+  - container
+
+hydra:
+  url: http://hydra:4444
+
+resource:
+  url: http://resource:8080
+

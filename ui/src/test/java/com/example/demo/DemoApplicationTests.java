@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
@@ -25,6 +26,9 @@ class DemoApplicationTests {
 
 	@MockBean
 	ClientRegistrationRepository clientRegistrationRepository;
+
+	@MockBean
+	RestTemplateBuilder builder;
 
 	@TestConfiguration
 	static class AuthorizedClient {

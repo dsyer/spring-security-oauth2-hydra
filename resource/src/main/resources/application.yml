@@ -1,3 +1,6 @@
+hydra:
+  url: http://127.0.0.1:4445
+
 server:
   port: 9000
 
@@ -6,10 +9,22 @@ spring:
     oauth2:
       resourceserver:
         opaquetoken:
-          introspection-uri: http://127.0.0.1:4445/oauth2/introspect
+          introspection-uri: ${hydra.url}/oauth2/introspect
           client-id: 
           client-secret: 
 
 logging:
   level:
     org.springframework.security: DEBUG
+
+---
+
+spring:
+  profiles:
+  - container
+
+hydra:
+  url: http://hydra:4445
+
+server:
+  port: 8080
