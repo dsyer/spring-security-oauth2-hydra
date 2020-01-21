@@ -58,6 +58,7 @@ kind: Service
 metadata:
   name: hydra
 spec:
+  type: NodePort
   ports:
     - protocol: TCP
       port: 3000

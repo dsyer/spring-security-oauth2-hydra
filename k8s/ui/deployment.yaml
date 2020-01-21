@@ -17,6 +17,7 @@ kind: Service
 metadata:
   name: ui
 spec:
+  type: NodePort
   ports:
     - protocol: TCP
       port: 8080
