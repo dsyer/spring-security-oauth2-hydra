@@ -28,3 +28,12 @@ hydra:
 
 server:
   port: 8080
+
+---
+
+spring:
+  profiles:
+  - gcp
+
+hydra:
+  url: https://bejaw.crabdance.com

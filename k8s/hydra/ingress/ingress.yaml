@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hydra-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  tls:
+  - hosts:
+    - awjaw.crabdance.com
+    - bejaw.crabdance.com
+    - cowjaw.crabdance.com
+    secretName: crabdance
+  rules:
+    - host: bejaw.crabdance.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: hydra
+            servicePort: 4445
+    - host: awjaw.crabdance.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: hydra
+            servicePort: 4444
+    - host: cowjaw.crabdance.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: hydra
+            servicePort: 3000

@@ -52,7 +52,7 @@ $ kubectl apply -f <(kustomize build k8s/system)
 or just the hydra bit:
 
 ```
-$ kubectl apply -f <(kustomize build k8s/hydra)
+$ kubectl apply -f <(kustomize build k8s/hydra/base)
 ```
 
 or the individual apps (via `k8s/ui` and `k8s/resource`). If you have the hydra service deployed and it is proxied on localhost on ports 3000 and 4444, then you can also run the apps (ui and resource) on localhost. To set up the OAuth2 client:
@@ -68,3 +68,9 @@ $ kubectl exec hydra-d94bcb5dd-hms6f -c hydra -ti -- \
         --scope openid,offline \
         --callbacks 'http://127.0.0.1:8080/login/oauth2/code/hydra,http://localhost:8080/login/oauth2/code/hydra'
 ```
+
+## Running Locally With Hydra in the Cloud
+
+There is an instance of Hydra running in GCP at awjaw.crabdance.com (maps to port 4444), bejaw.crabdance.com (maps to port 4445) and cowjaw.crabdance.com (maps to port 3000). It has the `auth-code-client` per the examples above. If you run the apps locally with `spring.profiles.active=gcp` they will connect to the remote auth server. The YAML needed to deploy the apps is in `k8s/hydra/ingress`. If you want to run them yourself you will need [nginx ingress](https://github.com/kubernetes/ingress-nginx/) as well, plus DNS registrations and certificates for the 3 hosts.
+
+> NOTE: The crabdance instance is maintained by the author, paid for by Pivotal subject to available funding, so it might not always work.

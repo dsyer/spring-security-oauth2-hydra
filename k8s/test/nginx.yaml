@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  tls:
+  - hosts:
+    - awjaw.crabdance.com
+    - bejaw.crabdance.com
+    - cowjaw.crabdance.com
+    secretName: crabdance
+  backend:
+    serviceName: nginx
+    servicePort: 80
+  rules:
+    - host: bejaw.crabdance.com
+      http:
+        paths:
+        - path: /*
+          backend:
+            serviceName: nginx
+            servicePort: 80
+    - host: awjaw.crabdance.com
+      http:
+        paths:
+        - path: /*
+          backend:
+            serviceName: nginx
+            servicePort: 80
+    - host: cowjaw.crabdance.com
+      http:
+        paths:
+        - path: /*
+          backend:
+            serviceName: nginx
+            servicePort: 80

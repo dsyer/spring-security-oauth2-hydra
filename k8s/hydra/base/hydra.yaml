@@ -24,15 +24,11 @@ spec:
           - containerPort: 5555
             hostPort: 5555
             name: extra
+        envFrom:
+        envFrom:
+        - configMapRef:
+            name: hydra-config
         env:
-        - name: URLS_SELF_ISSUER
-          value: http://127.0.0.1:4444
-        - name: URLS_CONSENT
-          value: http://127.0.0.1:3000/consent
-        - name: URLS_LOGIN
-          value: http://127.0.0.1:3000/login
-        - name: URLS_LOGOUT
-          value: http://127.0.0.1:3000/logout
         - name: DSN
           value: memory
         - name: SECRETS_SYSTEM
@@ -41,16 +37,23 @@ spec:
           value: public,pairwise
         - name: OIDC_SUBJECT_TYPE_PAIRWISE_SALT
           value: youReallyNeedToChangeThis
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 4444
       - name: consent
         image: oryd/hydra-login-consent-node:v1.0.0-rc.10
         ports:
           - containerPort: 3000
             hostPort: 3000
             name: http
-        env:
-        - name: HYDRA_ADMIN_URL
-          value: http://127.0.0.1:4445
-
+        envFrom:
+        - configMapRef:
+            name: hydra-config
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
 ---
 
 apiVersion: v1
@@ -58,7 +61,7 @@ kind: Service
 metadata:
   name: hydra
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 3000

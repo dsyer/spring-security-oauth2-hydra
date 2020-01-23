@@ -40,3 +40,12 @@ hydra:
 resource:
   url: http://resource:8080
 
+---
+
+spring:
+  profiles:
+  - gcp
+
+hydra:
+  url: https://awjaw.crabdance.com
+  redirect: https://awjaw.crabdance.com
