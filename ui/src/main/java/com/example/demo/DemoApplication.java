@@ -29,7 +29,8 @@ public class DemoApplication {
 @Controller
 class OAuth2LoginController {
 
-	@Value("${resource.url}") String url;
+	@Value("${resource.url}")
+	String url;
 	private RestTemplateBuilder builder;
 
 	OAuth2LoginController(RestTemplateBuilder builder) {
@@ -40,12 +41,16 @@ class OAuth2LoginController {
 	public String index(Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
 			@AuthenticationPrincipal OAuth2User oauth2User) {
 		model.addAttribute("accessToken", authorizedClient.getAccessToken());
-		model.addAttribute("userName", oauth2User.getName());
+		String userName = oauth2User.getAttributes().containsKey("email")
+				? (String) oauth2User.getAttributes().get("email")
+				: oauth2User.getName();
+		model.addAttribute("userName", userName);
 		model.addAttribute("clientName", authorizedClient.getClientRegistration().getClientName());
 		model.addAttribute("userAttributes", oauth2User.getAttributes());
 		try {
 			RestTemplate rest = builder.additionalRequestCustomizers(request -> {
-				request.getHeaders().add("Authorization", "Bearer " + authorizedClient.getAccessToken().getTokenValue());
+				request.getHeaders().add("Authorization",
+						"Bearer " + authorizedClient.getAccessToken().getTokenValue());
 			}).rootUri(url).build();
 			model.addAttribute("message", rest.getForObject("/", String.class));
 		} catch (Exception e) {

@@ -6,7 +6,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch)-ResourceApplication<demo-resource>",
+            "name": "Debug (Launch)-ResourceApplication",
             "request": "launch",
             "mainClass": "com.example.resource.ResourceApplication",
             "projectName": "demo-resource",
@@ -14,7 +14,23 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch)-DemoApplication<demo-ui>",
+            "name": "Debug (Launch)-ResourceApplication<azure>",
+            "request": "launch",
+            "mainClass": "com.example.resource.ResourceApplication",
+            "projectName": "demo-resource",
+            "vmArgs": "-Dspring.profiles.active=azure"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-ResourceApplication<okta>",
+            "request": "launch",
+            "mainClass": "com.example.resource.ResourceApplication",
+            "projectName": "demo-resource",
+            "vmArgs": "-Dspring.profiles.active=okta"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-DemoApplication",
             "request": "launch",
             "mainClass": "com.example.demo.DemoApplication",
             "projectName": "demo-ui",

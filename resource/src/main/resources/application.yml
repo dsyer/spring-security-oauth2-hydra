@@ -1,5 +1,5 @@
-hydra:
-  url: http://127.0.0.1:4445
+introspect:
+  url: http://127.0.0.1:4445/oauth2/introspect
 
 server:
   port: 9000
@@ -9,9 +9,9 @@ spring:
     oauth2:
       resourceserver:
         opaquetoken:
-          introspection-uri: ${hydra.url}/oauth2/introspect
-          client-id: 
-          client-secret: 
+          introspection-uri: ${introspect.url}
+          client-id: ${client.id:}
+          client-secret: ${client.secret:}
 
 logging:
   level:
@@ -23,8 +23,8 @@ spring:
   profiles:
   - container
 
-hydra:
-  url: http://hydra:4445
+introspect:
+  url: http://hydra:4445/oauth2/introspect
 
 server:
   port: 8080
@@ -35,5 +35,28 @@ spring:
   profiles:
   - gcp
 
-hydra:
-  url: https://bejaw.crabdance.com
+introspect:
+  url: https://bejaw.crabdance.com/oauth2/introspect
+
+---
+
+spring:
+  profiles:
+  - azure
+
+azure:
+  graph: https://graph.microsoft.com
+  user-info-uri: ${azure.graph}/oidc/userinfo
+
+---
+
+spring:
+  profiles:
+  - okta
+
+introspect:
+  url: https://dev-188673.okta.com/oauth2/default/v1/introspect
+
+client:
+  id: 0oa14lg1vzLXZrnTz4x6
+  secret: 'QDYGdeCEt1VnblULDxrwgGT_5XJ6rtmti1OCJ-Yu'

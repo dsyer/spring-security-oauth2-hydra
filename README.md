@@ -1,4 +1,14 @@
-Spring Boot OAuth2 client and resource server using [Hydra](https://github.com/ory/hydra) OAuth2 provider.
+## Running Locally with Azure AD
+
+There is an OAuth2 client registered in https://portal.azure.com/#blade[Azure AD] with redirects back to localhost. The UI app can always authenticate there if you are connected to the internet and it is running on localhost. The Resource server app needs `spring.profiles.active=azure` to be able to find the right endpoint to inspect the token.
+
+## Running Locally with Okta
+
+There is an OAuth2 client registered in https://developer.okta.com/[Okta] with redirects back to localhost. The UI app can always authenticate there if you are connected to the internet and it is running on localhost. The Resource server app needs `spring.profiles.active=okta` to be able to find the right endpoint to inspect the token. Unfortunately, the way the Okta system works, random users will not have an account in the server. The client is attached to the author's account. You can register yourself in Okta and create an application, using its base URL, id and secret in place of the one in the `application.yml`.
+
+## Run Hydra Locally
+
+Instead of Azure or Okta, you can use [Hydra](https://github.com/ory/hydra) as an OAuth2 provider.
 
 ```
 $ mvn install
@@ -71,6 +81,6 @@ $ kubectl exec hydra-d94bcb5dd-hms6f -c hydra -ti -- \
 
 ## Running Locally With Hydra in the Cloud
 
-There is an instance of Hydra running in GCP at awjaw.crabdance.com (maps to port 4444), bejaw.crabdance.com (maps to port 4445) and cowjaw.crabdance.com (maps to port 3000). It has the `auth-code-client` per the examples above. If you run the apps locally with `spring.profiles.active=gcp` they will connect to the remote auth server. The YAML needed to deploy the apps is in `k8s/hydra/ingress`. If you want to run them yourself you will need [nginx ingress](https://github.com/kubernetes/ingress-nginx/) as well, plus DNS registrations and certificates for the 3 hosts.
+There is an instance of Hydra running in GCP at awjaw.crabdance.com (maps to port 4444), bejaw.crabdance.com (maps to port 4445) and cowjaw.crabdance.com (maps to port 3000). It has the `auth-code-client` per the examples above. If you run the apps locally with `spring.profiles.active=crabdance` they will connect to the remote auth server. The YAML needed to deploy the apps is in `k8s/hydra/ingress`. If you want to run them yourself you will need [nginx ingress](https://github.com/kubernetes/ingress-nginx/) as well, plus DNS registrations and certificates for the 3 hosts.
 
 > NOTE: The crabdance instance is maintained by the author, paid for by Pivotal subject to available funding, so it might not always work.
