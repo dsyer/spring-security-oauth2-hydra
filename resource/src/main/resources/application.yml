@@ -10,7 +10,7 @@ spring:
       resourceserver:
         opaquetoken:
           introspection-uri: ${introspect.url}
-          client-id: ${client.id:}
+          client-id: ${client.id:auth-code-client}
           client-secret: ${client.secret:}
 
 logging:
