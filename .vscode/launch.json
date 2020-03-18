@@ -6,18 +6,18 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Debug (Launch)-ResourceApplication",
+            "request": "launch",
+            "mainClass": "com.example.resource.ResourceApplication",
+            "projectName": "demo-resource",
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch)-ResourceApplication<gcp>",
             "request": "launch",
             "mainClass": "com.example.resource.ResourceApplication",
             "projectName": "demo-resource",
             "vmArgs": "-Dspring.profiles.active=gcp"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-ResourceApplication",
-            "request": "launch",
-            "mainClass": "com.example.resource.ResourceApplication",
-            "projectName": "demo-resource",
         },
         {
             "type": "java",
