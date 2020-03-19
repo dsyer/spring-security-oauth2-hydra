@@ -17,6 +17,7 @@
 	<modules>
 		<module>resource</module>
 		<module>ui</module>
+		<module>consent</module>
 	</modules>
 
 	<properties>

@@ -37,7 +37,10 @@ Run the apps locally, e.g. with java on the command line:
 ```
 $ java -jar ui/target/*.jar
 $ java -jar resource/target/*.jar
+$ java -jar consent/target/*.jar
 ```
+
+The consent app is a Spring Boot app that authenticates user/password and acts as a "consent" service for the Hydra authorization server.
 
 ## Run Apps in Docker
 

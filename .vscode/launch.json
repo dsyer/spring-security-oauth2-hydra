@@ -6,10 +6,17 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - ConsentApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo.ConsentApplication",
+            "projectName": "demo-consent"
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch)-ResourceApplication",
             "request": "launch",
             "mainClass": "com.example.resource.ResourceApplication",
-            "projectName": "demo-resource",
+            "projectName": "demo-resource"
         },
         {
             "type": "java",

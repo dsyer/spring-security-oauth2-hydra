@@ -11,3 +11,9 @@ services:
   resource:
     build: ./resource
     restart: unless-stopped
+
+  consent:
+    build: ./consent
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

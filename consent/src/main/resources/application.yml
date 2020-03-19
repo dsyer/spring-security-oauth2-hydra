@@ -1,0 +1,34 @@
+server:
+  port: 3000
+
+spring:
+  security:
+    user:
+      name: user
+      password: password
+      roles: USER
+
+admin:
+  url: http://127.0.0.1:4445
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+---
+
+spring:
+  profiles:
+  - container
+
+admin:
+  url: http://hydra:4445
+
+---
+
+spring:
+  profiles:
+  - crabdance
+
+admin:
+  url: https://bejaw.crabdance.com
