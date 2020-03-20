@@ -10,6 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -63,15 +66,11 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 	// @formatter:on
 
 	private AuthenticationFailureHandler failureHandler() {
-		return (req, res, ex) -> {
-			req.getRequestDispatcher("/login?error").forward(req, res);
-		};
+		return (req, res, ex) -> req.getRequestDispatcher("/login?error").forward(req, res);
 	}
 
 	private AuthenticationSuccessHandler successHandler() {
-		return (req, res, auth) -> {
-			req.getRequestDispatcher("/").forward(req, res);
-		};
+		return (req, res, auth) -> req.getRequestDispatcher("/").forward(req, res);
 	}
 
 	@Bean
@@ -82,22 +81,18 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 }
 
-/**
- * @author Joe Grandja
- * @author Rob Winch
- */
 @Controller
 class LoginController {
 
 	private static ParameterizedTypeReference<Map<String, Object>> MAP_TYPE = new ParameterizedTypeReference<Map<String, Object>>() {
 	};
 
-	@Value("${admin.url}")
-	String url;
+	private String rootUrl;
 	private RestTemplate rest;
 
-	LoginController(RestTemplateBuilder builder) {
+	LoginController(RestTemplateBuilder builder, @Value("${admin.url}") String url) {
 		this.rest = builder.build();
+		rootUrl = url + "/oauth2/auth/requests";
 	}
 
 	@GetMapping("/login")
@@ -106,8 +101,7 @@ class LoginController {
 		if (!StringUtils.hasText(challenge)) {
 			unauthenticated(model, challenge);
 		}
-		URI uri = URI.create(url + "/oauth2/auth/requests/login?login_challenge=" + challenge);
-		Map<String, Object> response = rest.exchange(RequestEntity.get(uri).build(), MAP_TYPE).getBody();
+		Map<String, Object> response = get("login", challenge);
 		Boolean skip = (Boolean) response.get("skip");
 		if (skip != null && skip) {
 			return authenticated(model, new UsernamePasswordAuthenticationToken(response.get("subject"), "",
@@ -116,18 +110,17 @@ class LoginController {
 		return "login";
 	}
 
+	// Spring Security sends us back to /login if there is an authentication error
 	@PostMapping("/login")
 	public String reject(Model model, @RequestParam(name = "login_challenge", required = false) String challenge) {
-		URI uri = URI.create(url + "/oauth2/auth/requests/login/reject?login_challenge=" + challenge);
 		Map<String, Object> body = new HashMap<>();
-		Map<String, Object> response = rest
-				.exchange(RequestEntity.put(uri).contentType(MediaType.APPLICATION_JSON).body(body), MAP_TYPE)
-				.getBody();
-		body.put("error", "Rejected");
+		body.put("error", "Unauthorized");
 		body.put("error_description", "Could not process login request");
+		Map<String, Object> response = reject("login", challenge, body);
 		return "redirect:" + response.get("redirect_to");
 	}
 
+	// Spring Security forwards to "/" by default on successful authentication
 	@PostMapping("/")
 	public String home(Model model, @AuthenticationPrincipal Authentication principal,
 			@RequestParam(name = "login_challenge", required = false) String challenge) {
@@ -149,46 +142,68 @@ class LoginController {
 		if (!StringUtils.hasText(challenge)) {
 			unauthenticated(model, challenge);
 		}
-		URI uri = URI.create(url + "/oauth2/auth/requests/consent?consent_challenge=" + challenge);
-		Map<String, Object> response = rest.exchange(RequestEntity.get(uri).build(), MAP_TYPE).getBody();
+		Map<String, Object> response = get("consent", challenge);
 		Boolean skip = (Boolean) response.get("skip");
 		if (skip != null && skip) {
 			return consented(model, response, challenge);
 		}
+		// TODO: display UI for consent and accept POST for response
 		return consented(model, response, challenge);
 	}
 
 	private String consented(Model model, Map<String, Object> grant, String challenge) {
-		URI uri = URI.create(url + "/oauth2/auth/requests/consent/accept?consent_challenge=" + challenge);
 		Map<String, Object> body = new HashMap<>();
 		body.put("grant_scope", grant.get("requested_scope"));
 		body.put("grant_access_token_audience", grant.get("requested_access_token_audience"));
-		Map<String, Object> response = rest
-				.exchange(RequestEntity.put(uri).contentType(MediaType.APPLICATION_JSON).body(body), MAP_TYPE)
-				.getBody();
+		Map<String, Object> response = accept("consent", challenge, body);
 		return "redirect:" + response.get("redirect_to");
 	}
 
 	private String authenticated(Model model, @AuthenticationPrincipal Authentication principal,
 			@RequestParam("login_challenge") String challenge) {
-		URI uri = URI.create(url + "/oauth2/auth/requests/login/accept?login_challenge=" + challenge);
 		Map<String, Object> body = new HashMap<>();
 		body.put("subject", principal.getName());
 		body.put("remember", false);
-		Map<String, Object> response = rest
-				.exchange(RequestEntity.put(uri).contentType(MediaType.APPLICATION_JSON).body(body), MAP_TYPE)
-				.getBody();
+		Map<String, Object> response = accept("login", challenge, body);
 		return "redirect:" + response.get("redirect_to");
 	}
 
-	private String unauthenticated(Model model, @RequestParam("login_challenge") String challenge) {
-		URI uri = URI.create(url + "/oauth2/auth/requests/login/reject?login_challenge=" + challenge);
+	private String unauthenticated(Model model, String challenge) {
 		Map<String, Object> body = new HashMap<>();
 		body.put("error", "Denied");
 		body.put("error_description", "Could not process login request");
-		Map<String, Object> response = rest
-				.exchange(RequestEntity.put(uri).contentType(MediaType.APPLICATION_JSON).body(body), MAP_TYPE)
-				.getBody();
+		Map<String, Object> response = reject("login", challenge, body);
 		return "redirect:" + response.get("redirect_to");
 	}
+
+	private Map<String, Object> get(String path, String key, String value) {
+		String uri = rootUrl + "/{path}?{key}={value}";
+		return rest.exchange(uri, HttpMethod.GET, null, MAP_TYPE, path, key, value).getBody();
+	}
+
+	private Map<String, Object> get(String path, String value) {
+		String key = path + "_challenge";
+		return get(path, key, value);
+	}
+
+	private Map<String, Object> put(String path, String key, String value, Map<String, Object> body) {
+		String uri = rootUrl + "/{path}?{key}={value}";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return rest.exchange(uri, HttpMethod.PUT, new HttpEntity<>(body, headers), MAP_TYPE, path, key, value)
+				.getBody();
+	}
+
+	private Map<String, Object> reject(String path, String value, Map<String, Object> body) {
+		String key = path + "_challenge";
+		path = path + "/reject";
+		return put(path, key, value, body);
+	}
+
+	private Map<String, Object> accept(String path, String value, Map<String, Object> body) {
+		String key = path + "_challenge";
+		path = path + "/accept";
+		return put(path, key, value, body);
+	}
+
 }
